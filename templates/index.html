@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="" crossorigin="anonymous">
+    <title>Splinter API</title>
+</head>
+
+<body>
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">🛫 API.Splinter.com 🛫</h1>
+        <p class="lead">Try sample HTTP GET Requests here. Use Postman or 'python-requests' for DELETE & POST Requests.</p>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-between">            
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm text-center">
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">💬</h1>
+                        <h1 class="card-title pricing-card-title">Messages </h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>GET /messages </li>
+                        </ul>
+                        <a href="/messages"><button type="button" class="btn btn-lg btn-block btn-primary">Ver</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm text-center">
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">💬</h1>
+                        <h1 class="card-title pricing-card-title">Send message</h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>POST / send message </li>
+                        </ul>
+                        <a href="/messages/createJson"><button type="button" class="btn btn-lg btn-block btn-primary">Ver</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm text-center">
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">💬+🆔</h1>
+                        <h1 class="card-title pricing-card-title">Messages + Id </h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>GET /messages/:id </li>
+                        </ul>
+                        <a href="/messages/1"><button type="button" class="btn btn-lg btn-block btn-primary">Ver</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm text-center">
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">👦</h1>
+                        <h1 class="card-title pricing-card-title">Users </h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>GET /users </li>
+                        </ul>
+                        <a href="/users"><button type="button" class="btn btn-lg btn-block btn-primary">Ver</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm text-center">
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">👦+🆔</h1>
+                        <h1 class="card-title pricing-card-title">Users + Id </h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>GET /users/:id </li>
+                        </ul>
+                        <a href="/users/1"><button type="button" class="btn btn-lg btn-block btn-primary">Ver</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm text-center">
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">💬+🆔+🆔 </h1>
+                        <h1 class="card-title pricing-card-title">Messages + Ids </h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>GET /messages/id1=1&id2=2 </li>
+                        </ul>
+                        <a href="/messages/id1=1&id2=2"><button type="button" class="btn btn-lg btn-block btn-primary">Ver</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm text-center">
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">🔎</h1>
+                        <h1 class="card-title pricing-card-title">Text Search!</h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>GET /text-search </li>
+                        </ul>
+                        <a href="/text-search"><button type="button" class="btn btn-lg btn-block btn-primary">Ver</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

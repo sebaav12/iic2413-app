@@ -3,6 +3,7 @@ from pymongo import MongoClient, TEXT
 import pandas as pd
 import os
 import requests
+from datetime import date
 
 app = Flask(__name__)
 USER = "grupo3"
@@ -18,6 +19,10 @@ DB_MSGS = DB.messages
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/sendMessages')
+def sendMessage():
+    return render_template('sendMessage.html')
 
 # GET: /messages
 @app.route("/messages")
@@ -60,8 +65,8 @@ def get_users():
     users = list(DB_USERS.find({}, {"_id": 0}))
     return json.jsonify(users)
 
-# GET: /users/<int:uid>
-@app.route("/users/<int:uid>")
+# GET: /users/send/<int:uid>
+@app.route("/users/send/<int:uid>")
 def get_user_message(uid):
     user = list(DB_USERS.find({"uid": uid}, {"_id": 0}))
     if user == []:
@@ -70,27 +75,40 @@ def get_user_message(uid):
         messages = list(DB_MSGS.find({"sender": uid}, {"_id": 0}))
         return json.jsonify(user + messages)
 
+# GET: /users/receptant/<int:uid>
+@app.route("/users/receptant/<int:uid>")
+def get_receptant_message(uid):
+    user = list(DB_USERS.find({"uid": uid}, {"_id": 0}))
+    if user == []:
+        return json.jsonify({'HTTP 404 Not Found' : "Unexisting user."}), 404
+    else:
+        messages = list(DB_MSGS.find({"receptant": uid}, {"_id": 0}))
+        return json.jsonify(user + messages)
+
 # POST: /messages/MessageJson
 @app.route("/messages", methods=['POST'])
 def createMessage():
-    requestMessage = request.get_json()
+    # get_json()
+    requestMessage = request.form.to_dict(flat=False)
+    requestMessage['date'] = str(date.today())
+    requestMessage['lat'] = '-10000'
+    requestMessage['long'] = '10000'
+    requestMessage['sender'] = int(requestMessage['sender'][0])
+    requestMessage['message'] = requestMessage['message'][0]
+    receptant = getUidReceptant(requestMessage['receptant'], DB_USERS)
+    if isinstance(receptant, str):
+        return json.jsonify({'HTTP 404 Not Found': receptant}), 404
+    else:
+        requestMessage['receptant'] = receptant['uid']
     errorMessage = dataErrors(requestMessage, DB_USERS)
-    if isinstance(errorMessage, str):
+    if isinstance(errorMessage, list):
         return json.jsonify({'HTTP 404 Not Found': errorMessage}), 404
     requestMessage['mid'] = getMsgId(DB_MSGS)
     DB_MSGS.insert_one(requestMessage)
     return json.jsonify({'HTTP 200 OK' : f'Message successfully inserted'}), 200
 
-@app.route("/messages/createJson", methods=['POST', 'GET'])
-def receiveMessage():
-    if request.method == 'POST':
-        requestMessage = request.form.to_dict(flat=False)
-        return Response(requests.post(response="http://localhost:5000/messages/MessageJson", json=requestMessage, headers={'Content-type': 'application/json'}))
-    else:
-        return render_template('sendMessage.html')  
-
 def dataErrors(request, DB_USERS):
-    messageKeys = ['message', 'sender', 'receptant', 'lat', 'long', 'date']
+    messageKeys = ['message', 'sender', 'receptant', 'lat', 'long']
     missingKeys = set()
     for key in messageKeys:
         if not(key in request):
@@ -108,6 +126,12 @@ def dataErrors(request, DB_USERS):
     elif not(receptant):
         return f'Invalid receptant: {request["receptant"]}'
     return None
+
+def getUidReceptant(name, DB_USERS):
+    user = list(DB_USERS.find({"name": name[0]}, {"_id": 0}))
+    if user == []:
+        return f'Invalid receptant: {name}'
+    return user[0]
 
 def getUser(uid, DB_USERS):
     user = list(DB_USERS.find({"uid": uid}, {"_id": 0}))
@@ -134,19 +158,20 @@ def delete_user_message(mid):
         DB_MSGS.delete_one({"mid": mid})
         return json.jsonify({'HTTP 200 OK' : "Message deletion succesful."}), 200
 
-@app.route("/text-search", methods=['GET'])
+@app.route("/text-search", methods=['GET', 'POST'])
 def textsearch():
-    if request.is_json:
-        required = []
-        forbidden = []
-        desired = []
-        user_id = []
-        parameters = request.get_json()
+    required = []
+    forbidden = []
+    desired = []
+    user_id = []
+    # get_json()
+    if request.method == 'POST':
+        parameters = request.form.to_dict(flat=False)
         if parameters:
-            required = parameters['required'] if 'required' in parameters else []
-            forbidden = parameters['forbidden'] if 'forbidden' in parameters else []
-            desired = parameters['desired'] if 'desired' in parameters else []
-            user_id = parameters['userId'] if 'userId' in  parameters else []
+            required = parameters['required'][0].split(', ') if not(parameters['required'][0] in "") else []
+            forbidden = parameters['forbidden'][0].split(', ') if not(parameters['forbidden'][0] in "") else []
+            desired = parameters['desired'][0].split(', ') if not(parameters['desired'][0] in "") else []
+            user_id = parameters['userId'][0] if not(parameters['userId'][0] in "") else []
         filtered = " ".join([*(f"\"{s}\"" for s in required), *(f"{s}" for s in desired),
         *(f"-{s}" for s in forbidden)])
         flag = getUser(user_id, DB_USERS) #True si existe, False e.o.c.
@@ -234,9 +259,6 @@ def textsearch():
         else:
             result = {} #Entregan: user_id que no existe
             output = [msg for msg in result]
-    else:
-        result = DB_MSGS.find({}, {"_id": 0})
-        output = [msg for msg in result]
     return json.jsonify(output)
 
 def forbidden_function(messages, forbidden):

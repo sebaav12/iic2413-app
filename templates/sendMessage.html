@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="" crossorigin="anonymous">
+    <title>Splinter API</title>
+</head>
+
+<body>
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">Splinter.com 🛫</h1>
+        <p class="lead">Enviar mensaje</p>
+    </div>
+    <form action="http://127.0.0.1:5000/text-search" method="post">
+        <p>Palabras deseadas: (Ejemplo: perro, gato)<input type="text" name="desired" class="btn btn-lg btn-block btn-primary"></p>
+        <p>Palabras requeridas: (Ejemplo: perro, gato)<input type="text" name="required" class="btn btn-lg btn-block btn-primary"></p>
+        <p>Palabras no deseadas: (Ejemplo: perro, gato)<input type="text" name="forbidden" class="btn btn-lg btn-block btn-primary"></p>
+        <p>Id usuario busqueda: (Ejemplo: 5)<input type="text" name="userId" class="btn btn-lg btn-block btn-primary"></p>
+        <button type='submit' class='btn btn-lg btn-block btn-primary'>Enviar mensaje</button>"
+    </form>
+</body>
