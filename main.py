@@ -65,17 +65,6 @@ def get_users():
     users = list(DB_USERS.find({}, {"_id": 0}))
     return json.jsonify(users)
 
-
-# GET: /users/<int:uid>
-@app.route("/users/<int:uid>")
-def get_user_message(uid):
-    user = list(DB_USERS.find({"uid": uid}, {"_id": 0}))
-    if user == []:
-        return json.jsonify({'HTTP 404 Not Found' : "Unexisting user."}), 404
-    else:
-        messages = list(DB_MSGS.find({"sender": uid}, {"_id": 0}))
-        return json.jsonify(user + messages)
-
         
 
 # GET: /users/send/<int:uid>
