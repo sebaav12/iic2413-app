@@ -65,8 +65,6 @@ def get_users():
     users = list(DB_USERS.find({}, {"_id": 0}))
     return json.jsonify(users)
 
-        
-
 # GET: /users/send/<int:uid>
 @app.route("/users/send/<int:uid>")
 def get_user_message(uid):
@@ -93,8 +91,6 @@ def createMessage():
     # get_json()
     requestMessage = request.form.to_dict(flat=False)
     requestMessage['date'] = str(date.today())
-    requestMessage['lat'] = '-10000'
-    requestMessage['long'] = '10000'
     requestMessage['sender'] = int(requestMessage['sender'][0])
     requestMessage['message'] = requestMessage['message'][0]
     receptant = getUidReceptant(requestMessage['receptant'], DB_USERS)
@@ -103,14 +99,24 @@ def createMessage():
     else:
         requestMessage['receptant'] = receptant['uid']
     errorMessage = dataErrors(requestMessage, DB_USERS)
-    if isinstance(errorMessage, list):
+    if isinstance(errorMessage, set) or isinstance(errorMessage, str):
         return json.jsonify({'HTTP 404 Not Found': errorMessage}), 404
+    latAndLong = getLatLong(requestMessage['sender'], DB_MSGS)
+    requestMessage['lat'] = latAndLong[0]
+    requestMessage['long'] = latAndLong[1]
     requestMessage['mid'] = getMsgId(DB_MSGS)
     DB_MSGS.insert_one(requestMessage)
     return json.jsonify({'HTTP 200 OK' : f'Message successfully inserted'}), 200
 
+def getLatLong(uidSender, DB_MSGS):
+    user = list(DB_MSGS.find({"sender": uidSender}, {"_id": 0}))
+    if user == []:
+        return (-33.4962600, -70.6287800)
+    else:
+        return (user[0]['lat'], user[0]['long'])
+
 def dataErrors(request, DB_USERS):
-    messageKeys = ['message', 'sender', 'receptant', 'lat', 'long']
+    messageKeys = ['message', 'sender', 'receptant']
     missingKeys = set()
     for key in messageKeys:
         if not(key in request):
