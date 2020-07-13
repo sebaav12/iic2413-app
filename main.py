@@ -90,6 +90,7 @@ def get_receptant_message(uid):
 def createMessage():
     # get_json()
     requestMessage = request.form.to_dict(flat=False)
+    return json.jsonify({'dictMensaje': requestMessage})
     requestMessage['date'] = str(date.today())
     requestMessage['sender'] = int(requestMessage['sender'][0])
     requestMessage['message'] = requestMessage['message'][0]
